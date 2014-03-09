@@ -18,6 +18,9 @@ void imprime_ip()
 	printf("%i",IP);
 }
 
+//Metodo main, funcion principal de la aplicacion
+//Entradas: none
+//Salidas: none
 main()
 {
 	imprime_ip();	
