@@ -4,25 +4,38 @@
 #include <sys/socket.h> //Libreria de sockets
 #include "SocketsManuales.h"	
 #include <string.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+
 #define PUERTO 8080
-#define IP "127.0.0.1"
+#define IP "192.168.1.132"
+#define BACKLOG 10 /* El número de conexiones permitidas */
 
-struct sockdir dir,local_dir,remot_dir;
-struct sockdir cliente;
+struct sockaddr_in servidor;
+struct sockaddr_in cliente;
+int fd2;
 
-void asigna_dirs()
+void asigna_servidors()
 {
-	dir.sin_family = AF_INET;
-	dir.sin_port = htons (PUERTO);// Número de puerto donde recibirá paquetes el programa
-	dir.sin_addr.s_addr = inet_addr (IP); // IP por la que recibirá paquetes el programa 
+	servidor.sin_family = AF_INET;
+	servidor.sin_port = htons (PUERTO);// Número de puerto donde recibirá paquetes el programa
+	servidor.sin_addr.s_addr = inet_addr (IP); // IP por la que recibirá paquetes el programa 
 }
 
 void escucha_acepta()
 {
 	// Asignar valores a la estructura my_addr
-	bind(socket01, (struct sockaddr *)&local_dir, sizeof(struct sockaddr)); 
-	listen(socket01,5);
-//	accept(socket01, (struct sockaddr *)&remot_dir, &addrlen);
+	printf("1\n");
+	bind(socket01, (struct sockaddr *)&servidor, sizeof(struct sockaddr)); 
+	printf("2\n");
+	listen(socket01,BACKLOG);
+	printf("3\n");
+	int addrlen=sizeof(struct sockaddr);
+	printf("4\n");
+	fd2=accept(socket01, (struct sockaddr *)&cliente, &addrlen);
+	printf("6\n");
+
+	//close(socket01);
 }
 
 int crea_socket()
@@ -33,18 +46,34 @@ int crea_socket()
 
 int asigna_bind()
 {
-	bind01=bind(socket01,(struct sockaddr *) &dir, sizeof (dir) );
+	bind01=bind(socket01,(struct sockaddr *) &servidor,sizeof(struct sockaddr));
 	return bind01;
 }
 
 main()
-{
-	
-	
+{	
+	printf("1\n");
+	printf("Socket creando: %d\n",crea_socket());
+	printf("2\n");
+	asigna_servidors();
+	printf("3\n");
+	printf("Asignacion Socket: %d\n",asigna_bind());
+	printf("4\n");
+	escucha_acepta();
+	printf("5\n");
+	//printf("Cliente: %s\n",inet_ntoa(cliente.sin_addr));
+
+	printf("%d.%d.%d.%d\n",(int)(cliente.sin_addr.s_addr&0xFF),(int)((cliente.sin_addr.s_addr&0xFF00)>>8),(int)((cliente.sin_addr.s_addr&0xFF0000)>>16),(int)((cliente.sin_addr.s_addr&0xFF000000)>>24));
+
+	printf("Puerto; %d\n",ntohs(cliente.sin_port));
+
+	send(fd2,"Bienvenido a mi servidor.\n",25,0);
+	close(socket01);
+	/*
 	switch (fork())
 	{
 		case -1:
-		    /* Código de error */
+		    // Código de error
 		    printf("Jodido");
 		    break;
 		case 0:
@@ -54,27 +83,21 @@ main()
 			cliente.sin_addr.s_addr = inet_addr (IP); // IP por la que recibirá paquetes el programa 
 			printf("Cliente\n");
 			addrlen = sizeof (struct sockaddr );
-			bind_cliente=bind(socket_cliente,(struct sockaddr *) &dir, sizeof (dir) );
-			printf("Conexion: %d\n",connect(socket_cliente, (struct sockaddr*) &dir, addrlen));
+			bind_cliente=bind(socket_cliente,(struct sockaddr *) &servidor, sizeof (servidor) );
+			printf("Conexion: %d\n",connect(socket_cliente, (struct sockaddr*) &servidor, addrlen));
 			char mens_clien[100]  = "Ejemplo";
 			send(socket01, mens_clien, strlen(mens_clien)+1, 0);
 			printf("Fin cliente\n");
-		    /* Código del proceso hijo */
+		    // Código del proceso hijo
 		    break;
 		default:
 		    printf("Socket creado: %d\n",crea_socket());
-			asigna_dirs();
+			asigna_servidors();
 			printf("Asignacion Socket: %d\n",asigna_bind());
 			escucha_acepta();
 			char mens_serv[100];
 			printf("Bytes recibidos: %d\n",recv(socket_cliente, mens_serv, 100, 0)); 
 			wait(estadoHijo);
 
-			/*...*/
-			/**/
-			/*send(sid, mens_clien, strlen(mens_clien)+1, 0);*/
-			/*...*/
-			/*recv(sid, mens_serv, 100, 0); */
-		    /* Código del proceso original */
-	} 	
+	} 	*/
 }

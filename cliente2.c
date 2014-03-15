@@ -6,7 +6,7 @@
 #include <stdlib.h>
 /* netbd.h es necesitada por la estructura hostent ;-) */
 
-#define PORT 3550         
+#define PORT 8080        
 /* El Puerto Abierto del nodo remoto */
 
 #define MAXDATASIZE 100   
