@@ -4,41 +4,50 @@
 #include <string.h>
 //Definicion de MACROS
 #define MAX_CONTACTS 10
-
-contacto contactos[MAX_CONTACTS]; //Arreglo de contactos
+#define CONTACTOS "contactos.txt" //Nombre del archivo de contactos
+//Colores para impresion en consola
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+//Fin colores
+contacto contactos[MAX_CONTACTS]; //Arreglo de contactos de cantidad MAX_CONTACTS
 
 void CargaContactos()
 {
 	char datos[256];
 	char valor;
+	char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+	int cont;
 	FILE *fp;
-	fp = fopen("contactos.txt", "r");
+	fp = fopen(CONTACTOS, "r");
+	printf("Buscando archivo de contactos...\n");
 	if(fp==NULL)
-		printf("No hay archivo de contactos\n");
+		printf(ANSI_COLOR_RED"Error: " ANSI_COLOR_RESET "No hay archivo de contactos\n");
 	else
 	{
-		valor=fgetc(fp);
-		int cont=0;
-		while (!feof(fp))
-	    {
-			if(valor=='\n')
-				{
-					char *subs;
-					subs = strtok (datos,",");
-					while (subs != NULL)
-					  {
-						//printf ("%s\n",subs);     // Aqui deberias guardar tu dato en el array!
-						*(contactos[TotalContactos()]).nombre=*subs;
-						subs = strtok (NULL, ",");  // Aca tambien iria solo la coma.!!
-					  }
-				}
-			datos[cont]=valor;
-			valor=fgetc(fp);			
-			cont++;
-	    }
+		printf(ANSI_COLOR_GREEN "Archivo de contactos encontrado\n"ANSI_COLOR_RESET);
+		cont=0;
+		while ((read = getline(&line, &len, fp)) != -1)
+		{
+          char* nombre= strtok(line,",");
+          char* IP = strtok(NULL,",");
+          char* puerto = strtok(NULL,",");
+          contacto actual;
+		  actual=contactos[cont];
+		  actual.ip=IP;
+		  actual.nombre=nombre;
+		  actual.puerto=*puerto;
+		  printf("%s %s %d\n",actual.nombre,actual.ip,actual.puerto);
+		}
 	}
 	//printf("%s",datos);
-	printf("%s \n",contactos[0].nombre);
+//	printf("%s \n",contactos[0].nombre);
 
 }
 
