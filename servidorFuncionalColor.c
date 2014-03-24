@@ -71,7 +71,12 @@ int servidor()
 	  else{   send(misock,nombreenviado,sizeof(nombreenviado),0);
 		  while(1){		
 		  	char datoColor[2048]="\x1b[31m";
-			gets(datosenviados);
+			scanf("%s",datosenviados);
+			if(strcmp(datosenviados,"Exit")==0)
+			{
+				printf("Salida");
+				close(sock);
+				return;}
 			strcat(datoColor,datosenviados);
         	strcat(datoColor,"\x1b[0m");
 			if(send(misock,datoColor,sizeof(datoColor),0)<0){

@@ -20,11 +20,10 @@ int cliente(char *direccion)
  struct hostent *hp;
 
  //printf("Digite su username: ");
-strcpy(nombreenviado,"Jimmy");
- strcat(nombreenviado,":");
+strcpy(nombreenviado,"Jimmy:");
 
  sock = socket(AF_INET,SOCK_STREAM,0);
- if( sock<0)
+ if(sock<0)
   {perror("no se creo el socket\n");
    exit(1);
   }
