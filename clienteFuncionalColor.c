@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 
-int main()
+int cliente(char *direccion)
 {
  int sock,bytesrecibidos;
  struct sockaddr_in cliente;
@@ -19,8 +19,8 @@ int main()
  char datoColor[2048]="\x1b[36m";
  struct hostent *hp;
 
- printf("digite su username: ");
- gets(nombreenviado);
+ //printf("Digite su username: ");
+strcpy(nombreenviado,"Jimmy");
  strcat(nombreenviado,":");
 
  sock = socket(AF_INET,SOCK_STREAM,0);
@@ -38,7 +38,7 @@ int main()
 
  cliente.sin_family = AF_INET;         
  cliente.sin_port = htons(9005);
- cliente.sin_addr.s_addr = inet_addr("127.0.0.1"); //Conexión compu-compu
+ cliente.sin_addr.s_addr = inet_addr(direccion); //Conexión compu-compu
  bzero(&(cliente.sin_zero),8); 
     
  
@@ -64,8 +64,15 @@ else
 
  else{send(sock,nombreenviado,sizeof(nombreenviado),0);
       while(1){	       
+		strcpy(datosenviados,"");
         char datoColor[2048]="\x1b[36m";
-	      gets(datosenviados); 
+	     scanf("%s",datosenviados);
+		//printf("Datos enviados: %s",datosenviados); 
+		if(strcmp(datosenviados,"Exit")==0)
+			{
+				printf("Salida");
+				close(sock);
+				return;}
         strcat(datoColor,datosenviados);
         strcat(datoColor,"\x1b[0m");
 	     if(send(sock,datoColor,sizeof(datoColor),0)<0)

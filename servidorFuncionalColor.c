@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <netdb.h>
 
-int main()
+int servidor()
 {
 
  int sock;
@@ -32,10 +32,10 @@ int main()
   }
  else{
 
- 	printf("\t \t \x1b[32mBienvenido a Communicator\x1b[0m\n");
-  	printf("\t \t \x1b[36mIngresa 'Exit' en cualquier momento para salir\x1b[0m\n");
-  	printf("\n");
-  	printf("\n");
+ 	//printf("\t \t \x1b[32mBienvenido a Communicator\x1b[0m\n");
+  	//printf("\t \t \x1b[36mIngresa 'Exit' en cualquier momento para salir\x1b[0m\n");
+  	//printf("\n");
+  	printf("Servidor escuchando...\n");
     }
 
  servidor.sin_family = AF_INET;         
