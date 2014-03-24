@@ -123,12 +123,10 @@ contacto iniciaChat()
 			perror("No se ha podido crear el proceso hijo\n");
 			break;
 		case 0: // Cuando pid es cero quiere decir que es el proceso hijo
-			//servidor();
 			cliente(actual.ip);
 			break;
 		default: // Cuando es distinto de cero es el padre
-			servidor();
-			//cliente(actual.ip);
+			//servidor();
 			wait(estado);
 			printf("Mi proceso hijo ya ha terminado.\n");
 			break;

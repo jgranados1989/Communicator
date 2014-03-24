@@ -14,14 +14,14 @@ int main(int argc, char const *argv[])
        fp = fopen("archivo.txt", "r");
 
        printf("Ingresa el nombre que deseas buscar...\n");
-       scanf("%s",&usuario);
+       //scanf("%s",&usuario);
 
        while ((read = getline(&line, &len, fp)) != -1) {
           // printf("Retrieved line of length %zu :\n", read);
           char* nombre= strtok(line,",");
           char* IP = strtok(NULL,",");
           char* puerto = strtok(NULL,",");
-          int result = strncmp(nombre,usuario,100);
+          int result = strncmp(nombre,"esteban",100);
           if(result==0){
             printf("El usuario si está en la lista\n");
             break;

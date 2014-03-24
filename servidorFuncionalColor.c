@@ -57,11 +57,15 @@ int servidor()
    }
   else
   {
-	  printf("hola\n");
 	  if(fork()){
 		  recv(misock,nombrerecibido,sizeof(nombrerecibido),0);
 		  while(1){
-			  
+			  if(strcmp(datosenviados,"Exit")==0)
+					{
+				printf("Salida");
+				close(sock);
+				return;}
+
 			recv(misock,datosrecibidos,sizeof(datosrecibidos),0);
             printf("%s",nombrerecibido);                 
 			printf("%s\n",datosrecibidos);
@@ -77,6 +81,7 @@ int servidor()
 				printf("Salida");
 				close(misock);
 				close(sock);
+				exit(0);
 				return;}
 			strcat(datoColor,datosenviados);
         	strcat(datoColor,"\x1b[0m");

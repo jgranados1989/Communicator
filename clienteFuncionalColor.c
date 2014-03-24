@@ -55,6 +55,11 @@ else
            recv(sock,nombrerecibido,sizeof(nombrerecibido),0);	  
 	   while(1){
 	            recv(sock,datosrecibidos,sizeof(datosrecibidos),0);
+				if(strcmp(datosenviados,"Exit")==0)
+					{
+				printf("Salida");
+				close(sock);
+				return;}
                     printf("%s",nombrerecibido);
 		    printf("%s\n",datosrecibidos);
 			  
