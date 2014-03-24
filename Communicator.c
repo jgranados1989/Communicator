@@ -96,6 +96,27 @@ void ImprimeContactos()
 
 contacto iniciaChat()
 {
+	int pid;
+	int i;
+	int estado;
+ 
+	pid = fork();
+ 
+	switch(pid)
+	{
+		case -1: // Si pid es -1 quiere decir que ha habido un error
+			perror("No se ha podido crear el proceso hijo\n");
+			break;
+		case 0: // Cuando pid es cero quiere decir que es el proceso hijo
+			cliente("172.26.96.132");
+			break;
+		default: // Cuando es distinto de cero es el padre
+			//servidor();
+			wait(estado);
+			printf("Mi proceso hijo ya ha terminado.\n");
+			break;
+	}
+	
 	char nombre[256];
 	ImprimeContactos();
 	printf("Digita el nombre del contacto: ");

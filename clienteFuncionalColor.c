@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 
-int main()
+int cliente(char *direccion)
 {
  int sock,bytesrecibidos;
  struct sockaddr_in cliente;
@@ -19,7 +19,7 @@ int main()
  char datoColor[2048]="\x1b[36m";
  struct hostent *hp;
 
- printf("digite su username: ");
+ printf("Digite su username: ");
  gets(nombreenviado);
  strcat(nombreenviado,":");
 
@@ -38,7 +38,7 @@ int main()
 
  cliente.sin_family = AF_INET;         
  cliente.sin_port = htons(9005);
- cliente.sin_addr.s_addr = inet_addr("127.0.0.1"); //Conexión compu-compu
+ cliente.sin_addr.s_addr = inet_addr(direccion); //Conexión compu-compu
  bzero(&(cliente.sin_zero),8); 
     
  
