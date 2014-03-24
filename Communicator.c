@@ -126,7 +126,7 @@ contacto iniciaChat()
 			cliente(actual.ip);
 			break;
 		default: // Cuando es distinto de cero es el padre
-			//servidor();
+			servidor();
 			wait(estado);
 			printf("Mi proceso hijo ya ha terminado.\n");
 			break;
