@@ -100,6 +100,21 @@ contacto iniciaChat()
 	int i;
 	int estado;
  
+	char nombre[256];
+	ImprimeContactos();
+	printf("Digita el nombre del contacto: ");
+	scanf("%s",nombre);
+	int cont=0;
+	contacto actual;
+	while(cont<total_contactos)//Ciclo que imprime cada contacto con su info
+	{
+		actual=contactos[cont];		
+		if(strcmp(actual.nombre,nombre)==0){
+			printf("Contacto encontrado\n");
+			break;}
+		cont++;
+	}
+
 	pid = fork();
  
 	switch(pid)
@@ -108,7 +123,7 @@ contacto iniciaChat()
 			perror("No se ha podido crear el proceso hijo\n");
 			break;
 		case 0: // Cuando pid es cero quiere decir que es el proceso hijo
-			cliente("172.26.96.132");
+			cliente(actual.ip);
 			break;
 		default: // Cuando es distinto de cero es el padre
 			//servidor();
@@ -117,20 +132,6 @@ contacto iniciaChat()
 			break;
 	}
 	
-	char nombre[256];
-	ImprimeContactos();
-	printf("Digita el nombre del contacto: ");
-	scanf("%s",nombre);
-	int cont=0;
-	while(cont<total_contactos)//Ciclo que imprime cada contacto con su info
-	{
-		contacto actual=contactos[cont];		
-		if(strcmp(actual.nombre,nombre)==0){
-			printf("Contacto encontrado\n");
-			printf(CONTACTO_ACTUAL);
-			break;}
-		cont++;
-	}
 	return;
 }
 

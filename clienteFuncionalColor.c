@@ -19,8 +19,8 @@ int cliente(char *direccion)
  char datoColor[2048]="\x1b[36m";
  struct hostent *hp;
 
- printf("Digite su username: ");
- gets(nombreenviado);
+ //printf("Digite su username: ");
+strcpy(nombreenviado,"Jimmy");
  strcat(nombreenviado,":");
 
  sock = socket(AF_INET,SOCK_STREAM,0);
@@ -64,8 +64,15 @@ else
 
  else{send(sock,nombreenviado,sizeof(nombreenviado),0);
       while(1){	       
+		strcpy(datosenviados,"");
         char datoColor[2048]="\x1b[36m";
-	      gets(datosenviados); 
+	     scanf("%s",datosenviados);
+		//printf("Datos enviados: %s",datosenviados); 
+		if(strcmp(datosenviados,"Exit")==0)
+			{
+				printf("Salida");
+				close(sock);
+				return;}
         strcat(datoColor,datosenviados);
         strcat(datoColor,"\x1b[0m");
 	     if(send(sock,datoColor,sizeof(datoColor),0)<0)
