@@ -2,6 +2,8 @@
 #include "Communicator.h"
 #include <stdio.h>
 #include <string.h>
+#include "servidorFuncionalColor.c"
+#include "clienteFuncionalColor.c"
 //Definicion de MACROS
 #define MAX_CONTACTS 10
 #define CONTACTOS "contactos.txt" //Nombre del archivo de contactos
@@ -48,6 +50,7 @@ void CargaContactos()
 		}
 		printf("Contactos importados:" ANSI_COLOR_GREEN " %d\n"  ANSI_COLOR_RESET, total_contactos);
 	}
+	return;
 }
 
 void AgregarContactos(){
@@ -75,41 +78,77 @@ void AgregarContactos(){
 		FILE *fp = fopen(CONTACTOS, "a"); //creo un puntero del tipo File y cargo el archivo hola.txt, si el archivo no existe, lo crea y si existe escribe al final
 		fprintf(fp, "%s, %s, %s \n", usuario, ip, puerto);//escribo la variable a en el archivo archivo.txt
 	}
+	return;
 }
 void ImprimeContactos()
 {
 	int cont=0;
-	printf("NOMBRE\t    IP    \tPUERTO\n");
-	while(cont<total_contactos)
+	printf(ANSI_COLOR_CYAN "NOMBRE\t    IP    \tPUERTO\n" ANSI_COLOR_RESET);//Cabecera de la impresion
+	while(cont<total_contactos)//Ciclo que imprime cada contacto con su info
 	{
 		contacto actual=contactos[cont];		
 		printf(CONTACTO_ACTUAL);
 		cont++;
 	}
+	printf(ANSI_COLOR_YELLOW "==========Fin de contactos==========\n" ANSI_COLOR_RESET);
+	return;
+}
+
+contacto iniciaChat()
+{
+	char nombre[256];
+	ImprimeContactos();
+	printf("Digita el nombre del contacto: ");
+	scanf("%s",nombre);
+	int cont=0;
+	while(cont<total_contactos)//Ciclo que imprime cada contacto con su info
+	{
+		contacto actual=contactos[cont];		
+		if(strcmp(actual.nombre,nombre)==0){
+			printf("Contacto encontrado\n");
+			printf(CONTACTO_ACTUAL);
+			break;}
+		cont++;
+	}
+	return;
 }
 
 void menu()
 {
 	int i=1;
+	system("clear");
 	while(i)
 	{
 		int opcion;
 		printf(ANSI_COLOR_YELLOW "1." ANSI_COLOR_RESET "Agregar contactos\n");
 		printf(ANSI_COLOR_YELLOW "2." ANSI_COLOR_RESET "Imprimir contactos\n");
+		printf(ANSI_COLOR_YELLOW "3." ANSI_COLOR_RESET "Iniciar chat\n");
 		printf("Opcion: ");
 		scanf("%d",&opcion);
-		if(opcion==1)
-			AgregarContactos();
-		if(opcion==2)
-			ImprimeContactos();
-		else
+		if(opcion<0 || opcion>9)
+		{
+			printf(PERROR "Valor invalido\n");
 			i=0;
+			break;
+			return;
+		}
+		else
+		{
+			if(opcion==1)
+				AgregarContactos();
+			if(opcion==2)
+				ImprimeContactos();
+			if(opcion==3)
+				iniciaChat();
+			else{
+				i=0;
+				return;}
+		}
 	}
+	return;
 }
 main()
 {
 	CargaContactos();
-//	AgregarContactos();
-	//ImprimeContactos();
 	menu();
 }
