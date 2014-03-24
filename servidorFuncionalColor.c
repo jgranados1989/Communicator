@@ -75,6 +75,7 @@ int servidor()
 			if(strcmp(datosenviados,"Exit")==0)
 			{
 				printf("Salida");
+				close(misock);
 				close(sock);
 				return;}
 			strcat(datoColor,datosenviados);
