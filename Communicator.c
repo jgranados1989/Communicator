@@ -14,7 +14,10 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 //Fin colores
+#define PERROR ANSI_COLOR_RED "Error: " ANSI_COLOR_RESET 
+#define CONTACTO_ACTUAL "%s\t%s\t%s",actual.nombre,actual.ip,actual.puerto //para imprimir el contacto
 contacto contactos[MAX_CONTACTS]; //Arreglo de contactos de cantidad MAX_CONTACTS
+int total_contactos=0; //Variable que guarda el numero total de contactos
 
 void CargaContactos()
 {
@@ -27,74 +30,86 @@ void CargaContactos()
 	FILE *fp;
 	fp = fopen(CONTACTOS, "r");
 	printf("Buscando archivo de contactos...\n");
-	if(fp==NULL)
-		printf(ANSI_COLOR_RED"Error: " ANSI_COLOR_RESET "No hay archivo de contactos\n");
+	if(fp==NULL)//Imprime un mensaje de error si el archivo de contactos no existe
+		printf(PERROR "No hay archivo de contactos\n");
 	else
 	{
-		printf(ANSI_COLOR_GREEN "Archivo de contactos encontrado\n"ANSI_COLOR_RESET);
-		cont=0;
+		printf("Archivo de contactos encontrado\n");
 		while ((read = getline(&line, &len, fp)) != -1)
 		{
+		  //Separa cada linea del archivo por medio de la coma
           char* nombre= strtok(line,",");
           char* IP = strtok(NULL,",");
           char* puerto = strtok(NULL,",");
-          contacto actual;
-		  actual=contactos[cont];
-		  actual.ip=IP;
-		  actual.nombre=nombre;
-		  actual.puerto=*puerto;
-		  printf("%s %s %d\n",actual.nombre,actual.ip,actual.puerto);
+		  strcpy(contactos[total_contactos].nombre,nombre);
+		  strcpy(contactos[total_contactos].puerto,puerto);
+		  strcpy(contactos[total_contactos].ip,IP);
+		  total_contactos++;
 		}
+		printf("Contactos importados:" ANSI_COLOR_GREEN " %d\n"  ANSI_COLOR_RESET, total_contactos);
 	}
-	//printf("%s",datos);
-//	printf("%s \n",contactos[0].nombre);
-
-}
-
-int TotalContactos()//Retorna la cantidad de contactos que existen en el arreglo
-{
-	int cont=0,i=0;
-	while(i<MAX_CONTACTS)
-	{
-		if(*(contactos[i]).ip)
-			cont++;
-		i++;
-	}
-	return cont;
 }
 
 void AgregarContactos(){
+	if (total_contactos==MAX_CONTACTS)
+		printf(PERROR "Maximo numero de contactos alcanzado\n");
+	else
+	{
+		char usuario[256];
+		char ip[256];
+		char puerto[256];
 
-	char usuario[256];
-	char ip[256];
-	char puerto[256];
+		printf("Escribe tu nombre de usuario\n");
+		scanf("%s",usuario); //hago un scan y almaceno el valor en la variable usuario.
 
-	printf("Escribe tu nombre de usuario\n");
-	scanf("%s",usuario); //hago un scan y almaceno el valor en la variable usuario.
+		printf("Escribe tu dirección IP\n");
+		scanf("%s",ip); //hago un scan y almaceno el valor en la variable ip
 
-	printf("Escribe tu dirección IP\n");
-	scanf("%s",ip); //hago un scan y almaceno el valor en la variable ip
-
-	printf("Escribe tu dirección de puerto\n");
-	scanf("%s",puerto); //hago un scan y almaceno el valor en la variable usuario.
-
-	//Las siguientes 3 linea agregan el contacto al arreglo de contactos para un manejo mas eficiente
-	*(contactos[TotalContactos()]).ip=*ip;//agrega la ip al nuevo contacto
-//	contactos[TotalContactos()].nombre=usuario;//agrega el nombre al nuevo usuario
-	contactos[TotalContactos()].puerto=*puerto;//agrega el puerto al nuevo usuario
-
-	//Las siguientes 2 lineas agregan el contacto al archivo txt
-	FILE *fp = fopen("contactos.txt", "a"); //creo un puntero del tipo File y cargo el archivo hola.txt, si el archivo no existe, lo crea y si existe escribe al final
-	fprintf(fp, "%s, %s, %s \n", usuario, ip, puerto);//escribo la variable a en el archivo archivo.txt
-
+		printf("Escribe tu dirección de puerto\n");
+		scanf("%s",puerto); //hago un scan y almaceno el valor en la variable usuario.
+		strcpy(contactos[total_contactos].nombre,usuario);
+		strcpy(contactos[total_contactos].puerto,puerto);
+		strcpy(contactos[total_contactos].ip,ip);
+		
+		//Las siguientes 2 lineas agregan el contacto al archivo txt
+		FILE *fp = fopen(CONTACTOS, "a"); //creo un puntero del tipo File y cargo el archivo hola.txt, si el archivo no existe, lo crea y si existe escribe al final
+		fprintf(fp, "%s, %s, %s \n", usuario, ip, puerto);//escribo la variable a en el archivo archivo.txt
+	}
+}
+void ImprimeContactos()
+{
+	int cont=0;
+	printf("NOMBRE\t    IP    \tPUERTO\n");
+	while(cont<total_contactos)
+	{
+		contacto actual=contactos[cont];		
+		printf(CONTACTO_ACTUAL);
+		cont++;
+	}
 }
 
+void menu()
+{
+	int i=1;
+	while(i)
+	{
+		int opcion;
+		printf(ANSI_COLOR_YELLOW "1." ANSI_COLOR_RESET "Agregar contactos\n");
+		printf(ANSI_COLOR_YELLOW "2." ANSI_COLOR_RESET "Imprimir contactos\n");
+		printf("Opcion: ");
+		scanf("%d",&opcion);
+		if(opcion==1)
+			AgregarContactos();
+		if(opcion==2)
+			ImprimeContactos();
+		else
+			i=0;
+	}
+}
 main()
 {
-	//printf("%d \n",TotalContactos());
-	//TotalContactos();
-	//AgregarContactos();
-	//AgregarContactos();
-	//printf("%d \n",TotalContactos());
 	CargaContactos();
+//	AgregarContactos();
+	//ImprimeContactos();
+	menu();
 }
