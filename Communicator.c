@@ -4,6 +4,15 @@
 #include <string.h>
 #include "servidorFuncionalColor.c"
 #include "clienteFuncionalColor.c"
+
+#ifdef WIN32
+#include <windows.h>
+#define MIIP system("ipconfig")
+#else
+#include <unistd.h>
+#define MIIP system("hostname -I")
+#endif
+
 //Definicion de MACROS
 #define MAX_CONTACTS 10
 #define CONTACTOS "contactos.txt" //Nombre del archivo de contactos
@@ -102,6 +111,8 @@ contacto iniciaChat()
  
 	char nombre[256];
 	ImprimeContactos();
+	printf("Mi direccion ip es:\n" );
+	printf("%i\n",MIIP);
 	printf("Digita el nombre del contacto: ");
 	scanf("%s",nombre);
 	int cont=0;
@@ -117,7 +128,7 @@ contacto iniciaChat()
 
 	pid = fork();
  
-	switch(pid)
+	/*switch(pid)
 	{
 		case -1: // Si pid es -1 quiere decir que ha habido un error
 			perror("No se ha podido crear el proceso hijo\n");
@@ -130,7 +141,8 @@ contacto iniciaChat()
 			wait(estado);
 			printf("Mi proceso hijo ya ha terminado.\n");
 			break;
-	}
+	}*/
+	servidor();
 	
 	return;
 }
