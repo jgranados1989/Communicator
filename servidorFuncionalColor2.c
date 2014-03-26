@@ -44,21 +44,18 @@ void servidor(){
    	}
   	else{
 		while(1){
-      printf("1\n");
-		  recv(misock,nombrerecibido,sizeof(nombrerecibido),0);
-			//if(strcmp(datosenviados,"Exit")==0){
-				//printf("Salida");
-				//close(sock);
-				//return;
-			//}
-      printf("2\n");
+		  	recv(misock,nombrerecibido,sizeof(nombrerecibido),0);
+			if(strcmp(datosenviados,"Exit")==0){
+				printf("Salida");
+				close(sock);
+				return;
+			}
 			recv(misock,datosrecibidos,sizeof(datosrecibidos),0);
 			//if (strcmp(datosrecibidos,NULL)==0){
 				//return
 			//}
-      printf("3\n");
       printf("%s",nombrerecibido);                 
-			printf("%s",datosrecibidos);
+			printf("%s\n",datosrecibidos);
     }
 	} 
 }
