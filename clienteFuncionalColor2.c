@@ -46,9 +46,11 @@ int cliente(char *direccion){
 
 	else{
     		while(1){
+    			printf("4\n");
     			send(sock,nombreenviado,sizeof(nombreenviado),0);
 	    		char datoColor[2048]="\x1b[36m";
-	    		printf("%s\n", nombreenviado);
+	    		printf("5\n");
+	    		printf("%s", nombreenviado);
 				scanf("%s",datosenviados);
 				if(strcmp(datosenviados,"Exit")==0){
 					printf("Salida");
@@ -57,6 +59,7 @@ int cliente(char *direccion){
 				}
     			strcat(datoColor,datosenviados);
     			strcat(datoColor,"\x1b[0m");
+    			printf("6\n");
 				if(send(sock,datoColor,sizeof(datoColor),0)<0){
 					perror("envio fallido\n");
 					close(sock);
