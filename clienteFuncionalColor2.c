@@ -51,8 +51,9 @@ int cliente(char *direccion){
 	    		printf("%s", nombreenviado);
 	    		char ch;
 	    		int i =0;
-	    		while( (ch=getchar())!='\n' ){
-            		datosenviados[i++]=ch;
+	    		while((ch=getchar())!='\n'){
+            		datosenviados[i]=ch;
+            		i++;
      			}
 				//scanf("%s",datosenviados);
 				if(strcmp(datosenviados,"Exit")==0){
