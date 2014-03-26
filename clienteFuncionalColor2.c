@@ -49,10 +49,10 @@ int cliente(char *direccion){
     			send(sock,nombreenviado,sizeof(nombreenviado),0);
 	    		char datoColor[2048]="\x1b[36m";
 	    		printf("%s", nombreenviado);
-	    		while( (ch=getchar())!='\n' )
+	    		while( (ch=getchar())!='\n' ){
             		strcat(datosenviados,ch);
      			}
-				scanf("%s",datosenviados);
+				//scanf("%s",datosenviados);
 				if(strcmp(datosenviados,"Exit")==0){
 					printf("Salida");
 					close(sock);
