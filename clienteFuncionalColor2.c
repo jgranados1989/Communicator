@@ -45,11 +45,11 @@ int cliente(char *direccion){
  	}
 
 	else{
- 			send(sock,nombreenviado,sizeof(nombreenviado),0);
-    		while(1){	       
+    		while(1){
+    			send(sock,nombreenviado,sizeof(nombreenviado),0);
 	    		char datoColor[2048]="\x1b[36m";
+	    		printf("%s\n", nombreenviado);
 				scanf("%s",datosenviados);
-				//printf("Datos enviados: %s",datosenviados); 
 				if(strcmp(datosenviados,"Exit")==0){
 					printf("Salida");
 					close(sock);
@@ -65,5 +65,5 @@ int cliente(char *direccion){
 			}
 		}
 	
-return 0;
+	return 0;
 }
