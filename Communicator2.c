@@ -1,3 +1,4 @@
+//Inclusion de codigo
 #include "Communicator.h"
 #include <stdio.h>
 #include <string.h>
