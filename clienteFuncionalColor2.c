@@ -50,8 +50,9 @@ int cliente(char *direccion){
 	    		char datoColor[2048]="\x1b[36m";
 	    		printf("%s", nombreenviado);
 	    		char ch;
+	    		int i =0;
 	    		while( (ch=getchar())!='\n' ){
-            		strcat(datosenviados,ch);
+            		datosenviados[i++]=ch;
      			}
 				//scanf("%s",datosenviados);
 				if(strcmp(datosenviados,"Exit")==0){
