@@ -2,16 +2,8 @@
 #include "Communicator.h"
 #include <stdio.h>
 #include <string.h>
-#include "servidorFuncionalColor.c"
-#include "clienteFuncionalColor.c"
-
-#ifdef WIN32
-#include <windows.h>
-#define MIIP system("ipconfig")
-#else
-#include <unistd.h>
-#define MIIP system("hostname -I")
-#endif
+#include "servidor.c"
+#include "cliente.c"
 
 //Definicion de MACROS
 #define MAX_CONTACTS 10
@@ -25,12 +17,15 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 //Fin colores
+//Colores configurados para mostrar "error" y "advertencia" en otro color en los mensajes.
 #define PERROR ANSI_COLOR_RED "Error: " ANSI_COLOR_RESET 
+#define PWARNING ANSI_COLOR_YELLOW "Advertencia: " ANSI_COLOR_RESET
+
 #define CONTACTO_ACTUAL "%s\t%s\t%s",actual.nombre,actual.ip,actual.puerto //para imprimir el contacto
 contacto contactos[MAX_CONTACTS]; //Arreglo de contactos de cantidad MAX_CONTACTS
 int total_contactos=0; //Variable que guarda el numero total de contactos
 
-void CargaContactos()
+int CargaContactos() //funcion que carga los contactos del archivo contactos.txt
 {
 	char datos[256];
 	char valor;
@@ -42,7 +37,10 @@ void CargaContactos()
 	fp = fopen(CONTACTOS, "r");
 	printf("Buscando archivo de contactos...\n");
 	if(fp==NULL)//Imprime un mensaje de error si el archivo de contactos no existe
-		printf(PERROR "No hay archivo de contactos\n");
+		{
+			printf(PERROR "Archivo de contactos no encontrado\n");
+			return 1; //Retorna 1 al main indicando que el archivo de contactos no fue encontrado
+		}
 	else
 	{
 		printf("Archivo de contactos encontrado\n");
@@ -50,16 +48,16 @@ void CargaContactos()
 		{
 		  //Separa cada linea del archivo por medio de la coma
           char* nombre= strtok(line,",");
-          char* IP = strtok(NULL,",");
-          char* puerto = strtok(NULL,",");
+		  char* ipdir = strtok(NULL,",");
+          char* puerto = strtok(NULL,",");          
 		  strcpy(contactos[total_contactos].nombre,nombre);
 		  strcpy(contactos[total_contactos].puerto,puerto);
-		  strcpy(contactos[total_contactos].ip,IP);
+		  strcpy(contactos[total_contactos].ip,ipdir);
 		  total_contactos++;
 		}
 		printf("Contactos importados:" ANSI_COLOR_GREEN " %d\n"  ANSI_COLOR_RESET, total_contactos);
 	}
-	return;
+	return 0;
 }
 
 void AgregarContactos(){
@@ -111,8 +109,6 @@ contacto iniciaChat()
  
 	char nombre[256];
 	ImprimeContactos();
-	printf("Mi direccion ip es:\n" );
-	printf("%i\n",MIIP);
 	printf("Digita el nombre del contacto: ");
 	scanf("%s",nombre);
 	int cont=0;
@@ -126,24 +122,32 @@ contacto iniciaChat()
 		cont++;
 	}
 
-	pid = fork();
- 
-	/*switch(pid)
+	//pid = fork();
+	//abre_servidor();
+	//printf("Servidor cerrado\n");
+	//cierra_servidor();
+	//abre_cliente(actual.ip,actual.nombre);
+	//cierra_cliente();	
+	//cierra_servidor();
+	pid=fork();
+	switch(pid)
 	{
 		case -1: // Si pid es -1 quiere decir que ha habido un error
 			perror("No se ha podido crear el proceso hijo\n");
 			break;
 		case 0: // Cuando pid es cero quiere decir que es el proceso hijo
-			cliente(actual.ip);
+			printf("%s",actual.ip);
+			abre_cliente(actual.ip,actual.nombre);
+			cierra_cliente();			
 			break;
 		default: // Cuando es distinto de cero es el padre
-			servidor();
-			wait(estado);
-			printf("Mi proceso hijo ya ha terminado.\n");
+			abre_servidor();
+			wait(pid);
+			cierra_servidor();
+			printf("Fin de servidor\n");
+			cierra_servidor();
 			break;
-	}*/
-	servidor();
-	
+	} 
 	return;
 }
 
@@ -183,6 +187,9 @@ void menu()
 }
 main()
 {
-	CargaContactos();
+	if(CargaContactos()==1)
+	{
+		printf(PWARNING "Archivo de contactos no en");
+	}
 	menu();
 }
