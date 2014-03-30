@@ -20,23 +20,23 @@
 //Colores configurados para mostrar "error" y "advertencia" en otro color en los mensajes.
 #define PERROR ANSI_COLOR_RED "Error: " ANSI_COLOR_RESET 
 #define PWARNING ANSI_COLOR_YELLOW "Advertencia: " ANSI_COLOR_RESET
-
+#define GRACIAS printf("Gracias por utilizar Communicator!\n"); //imprimir un mensaje al final del programa
 #define CONTACTO_ACTUAL "%s\t%s\t%s",actual.nombre,actual.ip,actual.puerto //para imprimir el contacto
 contacto contactos[MAX_CONTACTS]; //Arreglo de contactos de cantidad MAX_CONTACTS
-int total_contactos=0; //Variable que guarda el numero total de contactos
+int total_contactos=0; 	//Variable que guarda el numero total de contactos
 
-int CargaContactos() //funcion que carga los contactos del archivo contactos.txt
+int CargaContactos() 	//funcion que carga los contactos del archivo contactos.txt
 {
 	char datos[256];
 	char valor;
-	char * line = NULL;
-    size_t len = 0;
-    ssize_t read;
-	int cont;
-	FILE *fp;
-	fp = fopen(CONTACTOS, "r");
+	char * line = NULL; //variables utilizadas en la lectura y gestion de las lineas de contactos.txt
+    size_t len = 0;		//variables utilizadas en la lectura y gestion de las lineas de contactos.txt
+    ssize_t read;		//variables utilizadas en la lectura y gestion de las lineas de contactos.txt
+	int cont;			//variable contador
+	FILE *archivo;		//variable de archivo "archivo"
+	archivo = fopen(CONTACTOS, "r");	//apertura del archivo en modo lectura
 	printf("Buscando archivo de contactos...\n");
-	if(fp==NULL)//Imprime un mensaje de error si el archivo de contactos no existe
+	if(archivo==NULL)	//Imprime un mensaje de error si el archivo de contactos no existe
 		{
 			printf(PERROR "Archivo de contactos no encontrado\n");
 			return 1; //Retorna 1 al main indicando que el archivo de contactos no fue encontrado
@@ -44,15 +44,15 @@ int CargaContactos() //funcion que carga los contactos del archivo contactos.txt
 	else
 	{
 		printf("Archivo de contactos encontrado\n");
-		while ((read = getline(&line, &len, fp)) != -1)
+		while ((read = getline(&line, &len, archivo)) != -1) //Comienza a leer linea por linea y a dividir cada linea de acuerdo a la estructura definida en el archivo contactos.txt
 		{
 		  //Separa cada linea del archivo por medio de la coma
           char* nombre= strtok(line,",");
 		  char* ipdir = strtok(NULL,",");
           char* puerto = strtok(NULL,",");          
-		  strcpy(contactos[total_contactos].nombre,nombre);
-		  strcpy(contactos[total_contactos].puerto,puerto);
-		  strcpy(contactos[total_contactos].ip,ipdir);
+		  strcpy(contactos[total_contactos].nombre,nombre);//ingresa el nombre al struct contacto actual
+		  strcpy(contactos[total_contactos].puerto,puerto);//ingresa el puerto al struct contacto actual
+		  strcpy(contactos[total_contactos].ip,ipdir);//ingresa la ip al struct contacto actual
 		  total_contactos++;
 		}
 		printf("Contactos importados:" ANSI_COLOR_GREEN " %d\n"  ANSI_COLOR_RESET, total_contactos);
@@ -82,11 +82,12 @@ void AgregarContactos(){
 		strcpy(contactos[total_contactos].ip,ip);
 		
 		//Las siguientes 2 lineas agregan el contacto al archivo txt
-		FILE *fp = fopen(CONTACTOS, "a"); //creo un puntero del tipo File y cargo el archivo hola.txt, si el archivo no existe, lo crea y si existe escribe al final
-		fprintf(fp, "%s, %s, %s \n", usuario, ip, puerto);//escribo la variable a en el archivo archivo.txt
+		FILE *archivo = fopen(CONTACTOS, "a"); //creo un puntero del tipo File y cargo el archivo hola.txt, si el archivo no existe, lo crea y si existe escribe al final
+		fprintf(archivo, "%s, %s, %s \n", usuario, ip, puerto);//escribo la variable a en el archivo archivo.txt
 	}
 	return;
 }
+
 void ImprimeContactos()
 {
 	int cont=0;
@@ -155,12 +156,14 @@ void menu()
 {
 	int i=1;
 	system("clear");
+	printf("\t\t"ANSI_COLOR_GREEN" *** "ANSI_COLOR_RESET"MENU PRINCIPAL COMMUNICATOR"ANSI_COLOR_GREEN" ***\n"ANSI_COLOR_RESET);
 	while(i)
 	{
 		int opcion;
 		printf(ANSI_COLOR_YELLOW "1." ANSI_COLOR_RESET "Agregar contactos\n");
 		printf(ANSI_COLOR_YELLOW "2." ANSI_COLOR_RESET "Imprimir contactos\n");
 		printf(ANSI_COLOR_YELLOW "3." ANSI_COLOR_RESET "Iniciar chat\n");
+		printf(ANSI_COLOR_YELLOW "0." ANSI_COLOR_RESET "Salir\n");
 		printf("Opcion: ");
 		scanf("%d",&opcion);
 		if(opcion<0 || opcion>9)
@@ -180,6 +183,7 @@ void menu()
 				iniciaChat();
 			else{
 				i=0;
+				GRACIAS
 				return;}
 		}
 	}
@@ -187,9 +191,23 @@ void menu()
 }
 main()
 {
+	system("clear");
+	printf("\t\t"ANSI_COLOR_GREEN" *** "ANSI_COLOR_RESET"BIENVENIDO A COMMUNICATOR"ANSI_COLOR_GREEN" ***\n"ANSI_COLOR_RESET);
+	char opcion; 
+	/************************************************************************
+	 * Este bloque intenta cargar los contactos, en caso de no encontrarlo	*
+	 * pregunta al usuario si desea continuar sin contactos, si el usuario	*
+	 * responde 'N' o 'n' el programa se cierra								*
+	 ************************************************************************/
 	if(CargaContactos()==1)
 	{
-		printf(PWARNING "Archivo de contactos no en");
+		printf(PWARNING "Archivo de contactos no encontrado\nDesea continuar? S/N: ");
+		scanf("%c",&opcion);
+		if(toupper(opcion)=='N')
+		{
+			GRACIAS
+			return;
+		}
 	}
 	menu();
 }
