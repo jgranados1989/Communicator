@@ -6,7 +6,7 @@
 #include "cliente.c"
 
 //Definicion de MACROS
-#define MAX_CONTACTS 10
+#define MAX_CONTACTS 20
 #define CONTACTOS "contactos.txt" //Nombre del archivo de contactos
 //Colores para impresion en consola
 #define ANSI_COLOR_RED     "\x1b[31m"
@@ -20,6 +20,7 @@
 //Colores configurados para mostrar "error" y "advertencia" en otro color en los mensajes.
 #define PERROR ANSI_COLOR_RED "Error: " ANSI_COLOR_RESET 
 #define PWARNING ANSI_COLOR_YELLOW "Advertencia: " ANSI_COLOR_RESET
+#define PINFO ANSI_COLOR_GREEN "Informacion: " ANSI_COLOR_RESET
 #define GRACIAS printf("Gracias por utilizar Communicator!\n"); //imprimir un mensaje al final del programa
 #define CONTACTO_ACTUAL "%s\t%s\t%s",actual.nombre,actual.ip,actual.puerto //para imprimir el contacto
 contacto contactos[MAX_CONTACTS]; //Arreglo de contactos de cantidad MAX_CONTACTS
@@ -77,13 +78,16 @@ void AgregarContactos(){
 
 		printf("Escribe tu dirección de puerto\n");
 		scanf("%s",puerto); //hago un scan y almaceno el valor en la variable usuario.
+		printf("Contacto: %s - %s - %s\n",usuario,puerto,ip);
 		strcpy(contactos[total_contactos].nombre,usuario);
 		strcpy(contactos[total_contactos].puerto,puerto);
 		strcpy(contactos[total_contactos].ip,ip);
 		
 		//Las siguientes 2 lineas agregan el contacto al archivo txt
 		FILE *archivo = fopen(CONTACTOS, "a"); //creo un puntero del tipo File y cargo el archivo hola.txt, si el archivo no existe, lo crea y si existe escribe al final
-		fprintf(archivo, "%s, %s, %s \n", usuario, ip, puerto);//escribo la variable a en el archivo archivo.txt
+		fprintf(archivo, "%s,%s,%s\n", usuario, ip, puerto);//escribo la variable a en el archivo archivo.txt
+		close(archivo);
+		printf(PINFO "Contacto agregado exitosamente!\n");
 	}
 	return;
 }
@@ -92,14 +96,13 @@ void ImprimeContactos()
 {
 	int cont=0;
 	printf(ANSI_COLOR_CYAN "NOMBRE\t    IP    \tPUERTO\n" ANSI_COLOR_RESET);//Cabecera de la impresion
-	while(cont<total_contactos)//Ciclo que imprime cada contacto con su info
+	while(cont<=total_contactos)//Ciclo que imprime cada contacto con su info
 	{
 		contacto actual=contactos[cont];		
 		printf(CONTACTO_ACTUAL);
 		cont++;
 	}
-	printf(ANSI_COLOR_YELLOW "==========Fin de contactos==========\n" ANSI_COLOR_RESET);
-	return;
+	printf(ANSI_COLOR_YELLOW "\n==========Fin de contactos==========\n" ANSI_COLOR_RESET);
 }
 
 contacto iniciaChat()
@@ -122,15 +125,8 @@ contacto iniciaChat()
 			break;}
 		cont++;
 	}
-
-	//pid = fork();
-	//abre_servidor();
-	//printf("Servidor cerrado\n");
-	//cierra_servidor();
-	//abre_cliente(actual.ip,actual.nombre);
-	//cierra_cliente();	
-	//cierra_servidor();
 	pid=fork();
+	//abre_servidor();
 	switch(pid)
 	{
 		case -1: // Si pid es -1 quiere decir que ha habido un error
@@ -138,27 +134,29 @@ contacto iniciaChat()
 			break;
 		case 0: // Cuando pid es cero quiere decir que es el proceso hijo
 			printf("%s",actual.ip);
+			printf("Hijo 0\n");
 			abre_cliente(actual.ip,actual.nombre);
 			cierra_cliente();			
 			break;
 		default: // Cuando es distinto de cero es el padre
+			printf("Padre default\n");
 			abre_servidor();
 			wait(pid);
-			cierra_servidor();
 			printf("Fin de servidor\n");
 			cierra_servidor();
 			break;
 	} 
+	//cierra_servidor();
 	return;
 }
 
 void menu()
 {
 	int i=1;
-	system("clear");
-	printf("\t\t"ANSI_COLOR_GREEN" *** "ANSI_COLOR_RESET"MENU PRINCIPAL COMMUNICATOR"ANSI_COLOR_GREEN" ***\n"ANSI_COLOR_RESET);
 	while(i)
 	{
+		//system("clear");
+	printf("\t\t"ANSI_COLOR_GREEN" *** "ANSI_COLOR_RESET"MENU PRINCIPAL COMMUNICATOR"ANSI_COLOR_GREEN" ***\n"ANSI_COLOR_RESET);
 		int opcion;
 		printf(ANSI_COLOR_YELLOW "1." ANSI_COLOR_RESET "Agregar contactos\n");
 		printf(ANSI_COLOR_YELLOW "2." ANSI_COLOR_RESET "Imprimir contactos\n");
@@ -175,16 +173,22 @@ void menu()
 		}
 		else
 		{
-			if(opcion==1)
-				AgregarContactos();
-			if(opcion==2)
-				ImprimeContactos();
-			if(opcion==3)
-				iniciaChat();
-			else{
-				i=0;
-				GRACIAS
-				return;}
+			switch(opcion)
+			{
+				case 1:
+					AgregarContactos();
+					break;
+				case 2:
+					ImprimeContactos();
+					break;
+				case 3:
+					iniciaChat();
+					break;
+				default:
+					i=0;
+					GRACIAS
+					break;
+			}			
 		}
 	}
 	return;
