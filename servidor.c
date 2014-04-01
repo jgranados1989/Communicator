@@ -104,7 +104,7 @@ void abre_servidor()
 				cierra_servidor();
 				return;}
 			else{
-				printf("Mensaje del cliente: ");
+				printf("Mensaje entrante: ");
 				printf(ANSI_COLOR_CYAN "%s\n" ANSI_COLOR_RESET,datosrecibidos);
 	    		}	
 			}

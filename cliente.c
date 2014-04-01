@@ -20,7 +20,7 @@ void cierra_cliente()
    close(fd);   /* cerramos fd =) */
 }
 
-void abre_cliente(char *argv,char *nombre)
+int abre_cliente(char *argv,char *nombre)
 {
    int numbytes;       
    /* ficheros descriptores */
@@ -54,14 +54,14 @@ void abre_cliente(char *argv,char *nombre)
    /*he->h_addr pasa la información de ``*he'' a "h_addr" */
    //bzero(&(server.sin_zero),8);
 
-   if(connect(fd, (struct sockaddr *)&server,
-      sizeof(struct sockaddr))==-1){ 
+   while(connect(fd, (struct sockaddr *)&server,
+      sizeof(struct sockaddr))!=-1){ 
       /* llamada a connect() */
-      printf("connect() error\n");
-      exit(-1);
+//      printf("connect() error\n");
+  //    return(1);
    }
-	else
-		printf("Conexion exitosa\n");
+	//else
+		//printf("Conexion exitosa\n");
 	while(1){
 				int i;
 				char ch;
