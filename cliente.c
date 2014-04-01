@@ -10,8 +10,11 @@
 /* El Puerto Abierto del nodo remoto */
 
 #define MAXDATASIZE 100   
+#define ANSI_COLOR_RESET   "\x1b[0m"
 /* El número máximo de datos en bytes */
 int fd;
+char datosenviados[256];
+
 void cierra_cliente()
 {
    close(fd);   /* cerramos fd =) */
@@ -30,14 +33,7 @@ void abre_cliente(char *argv,char *nombre)
 
    struct sockaddr_in server;  
    /* información sobre la dirección del servidor */
-
-   /*if (argc !=2) { 
-      /* esto es porque nuestro programa sólo necesitará un
-      argumento, (la IP) 
-      printf("Uso: %s <Dirección IP>\n",argv[0]);
-      exit(-1);
-   }
-	*/
+	
    if ((he=gethostbyname(argv))==NULL){       
       /* llamada a gethostbyname() */
       printf("gethostbyname() error\n");
@@ -53,7 +49,8 @@ void abre_cliente(char *argv,char *nombre)
    server.sin_family = AF_INET;
    server.sin_port = htons(PORT); 
    /* htons() es necesaria nuevamente ;-o */
-   server.sin_addr = *((struct in_addr *)he->h_addr);  
+   //server.sin_addr = *((struct in_addr *)he->h_addr);  
+	server.sin_addr.s_addr=inet_addr(argv);
    /*he->h_addr pasa la información de ``*he'' a "h_addr" */
    //bzero(&(server.sin_zero),8);
 
@@ -65,18 +62,29 @@ void abre_cliente(char *argv,char *nombre)
    }
 	else
 		printf("Conexion exitosa\n");
-	int estado=0;
-	while(estado==0)
-	{
-	   if ((numbytes=recv(fd,buf,MAXDATASIZE,0)) == -1){  
-		  /* llamada a recv() */
-		  printf("Error en recv() \n");
-		  exit(-1);
-	   }
-	
-		buf[numbytes]='\0';
-			printf("Mensaje del Servidor: %s\n",buf);
-		if(strcmp(buf,"Exit")==0)
-			estado=1;
+	while(1){
+				int i;
+				char ch;
+	    		for(i=0; i<2048||datosenviados[i]!='\0'; i++)
+				{
+	    			datosenviados[i] = '\0';
+	    		}
+	    		i = 0;
+	    		while( (ch=getchar())!='\n' )
+				{
+            		datosenviados[i]=ch;
+            		i++;
+     			}
+				
+				if(send(fd,datosenviados,sizeof(datosenviados),0)<0){
+					perror("envio fallido\n");
+					cierra_cliente();
+	    			exit(1);
+				}
+				else if(strcmp(datosenviados,"Exit")==0){
+					printf("Salida");
+					cierra_cliente();
+					return;
+				}	
 	}
 }
