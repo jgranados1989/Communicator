@@ -2,8 +2,8 @@
 #include "Communicator.h"
 #include <stdio.h>
 #include <string.h>
-#include "servidor.c"
-#include "cliente.c"
+#include "server.c"
+#include "client.c"
 
 //Definicion de MACROS
 #define MAX_CONTACTS 20
@@ -25,6 +25,7 @@
 #define CONTACTO_ACTUAL "%s\t%s\t%s",actual.nombre,actual.ip,actual.puerto //para imprimir el contacto
 contacto contactos[MAX_CONTACTS]; //Arreglo de contactos de cantidad MAX_CONTACTS
 int total_contactos=0; 	//Variable que guarda el numero total de contactos
+
 
 int CargaContactos() 	//funcion que carga los contactos del archivo contactos.txt
 {
@@ -86,7 +87,7 @@ void AgregarContactos(){
 		//Las siguientes 2 lineas agregan el contacto al archivo txt
 		FILE *archivo = fopen(CONTACTOS, "a"); //creo un puntero del tipo File y cargo el archivo hola.txt, si el archivo no existe, lo crea y si existe escribe al final
 		fprintf(archivo, "%s,%s,%s\n", usuario, ip, puerto);//escribo la variable a en el archivo archivo.txt
-		close(archivo);
+		fclose(archivo);
 		printf(PINFO "Contacto agregado exitosamente!\n");
 	}
 	return;
@@ -140,12 +141,12 @@ contacto iniciaChat()
 			break;			
 		default: // Cuando es distinto de cero es el padre
 			abre_servidor();
-			wait(pid);
+			wait(estado);
 			cierra_servidor();
 			break;
 	} 
-	cierra_servidor();
-	cierra_cliente();
+	//cierra_servidor();
+	//cierra_cliente();
 	return;
 }
 
