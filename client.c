@@ -6,6 +6,9 @@
 #include <stdlib.h>
 /* netbd.h es necesitada por la estructura hostent ;-) */
 
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
 #define PORT 8080
 /* El Puerto Abierto del nodo remoto */
 
@@ -49,7 +52,7 @@ exit(-1);
       printf("socket() error\n");
       exit(-1);
    }
-
+	
    server.sin_family = AF_INET;
    server.sin_port = htons(PORT);
    /* htons() es necesaria nuevamente ;-o */
@@ -75,8 +78,11 @@ exit(-1);
 }
 
 buf[numbytes]='\0';
-printf("Mensaje del Servidor: %s\n",buf);
-if(strcmp(buf,"Exit")==0)
-estado=1;
+if(strcmp(buf,"")==0){}
+else{
+	printf("Recibido: "ANSI_COLOR_CYAN "%s\n" ANSI_COLOR_RESET,buf);
+	}
+	if(strcmp(buf,"Exit")==0)
+	estado=1;
 }
 }

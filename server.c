@@ -85,18 +85,36 @@ printf("Asignacion Socket: %d\n",asigna_bind());
 escucha_acepta();
 printf("Cliente: %d\n",inet_ntoa(cliente.sin_addr));
 printf("Puerto; %d\n",ntohs(cliente.sin_port));
-char *mensaje;
+char msj_enviado[256];//Arreglo para envio de mensajes
 int estado=0;
 while(estado==0){
+//Codigo para limpiar el arreglo msj_enviado	
+				int i;
+				char ch;
+	    		for(i=0; i<2048||msj_enviado[i]!='\0'; i++)
+					{
+						msj_enviado[i] = '\0';
+					}
+	    		i = 0;
+	    		while( (ch=getchar())!='\n' )
+					{
+		        		msj_enviado[i]=ch;
+		        		i++;
+		 			}
+				//fin de limpieza de msj_enviado
+				if(send(fd2,msj_enviado,sizeof(msj_enviado),0)<0)
+				{//envio de msj_enviado al servidor
+					perror("envio fallido\n");
+					cierra_servidor();
+	    			exit(-1);
+				}
+				else if(strcmp(msj_enviado,"Exit")==0)
+				{//Verifica si se escribio la palabra Exit para terminar
+					printf("Salida");
+					cierra_servidor();
+					exit(-1);
+				}	
+	}
 
-scanf("%s",mensaje);
-if(strcmp(mensaje,"Exit")==0){
-send(fd2,mensaje,25,0);
-estado=1;}
-else{
-printf("mensaje enviado -%s-\n",mensaje);
-send(fd2,mensaje,25,0);	
-}
-}
 return;
 }
